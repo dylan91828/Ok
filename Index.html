@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GENERADOR DE KEYS</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b0712;color:white;font-family:Arial;min-height:100vh;display:grid;place-items:center;padding:20px}
+main{width:100%;max-width:430px;background:#191024;border:1px solid #7136a0;border-radius:20px;padding:25px;box-shadow:0 0 35px #9333ea30}
+h1{text-align:center;color:#c084fc}
+p{text-align:center;color:#bda9ce}
+input,select{width:100%;padding:14px;margin:8px 0;background:#291b39;color:white;border:1px solid #68418b;border-radius:9px}
+button{width:100%;padding:14px;margin-top:12px;background:#9333ea;color:white;border:0;border-radius:9px;font-weight:bold;cursor:pointer}
+button.secondary{background:#38234d}
+#resultado{background:#281b36;padding:12px;border-radius:10px;margin-top:18px;overflow-wrap:anywhere}
+.key{padding:10px;border-bottom:1px solid #59416d;font-size:13px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<main>
+<section id="login">
+<h1>🔐 ADMIN LOGIN</h1>
+<p>Acceso al generador</p>
+<input id="usuario" placeholder="Usuario">
+<input id="password" type="password" placeholder="Contraseña">
+<button onclick="entrar()">ENTRAR</button>
+<p id="error"></p>
+</section>
+
+<section id="app" class="hidden">
+<h1>🔑 GENERADOR DE KEYS</h1>
+<p>Generador de claves aleatorias</p>
+<label>Cantidad de keys</label>
+<select id="cantidad">
+<option value="1">1 KEY</option>
+<option value="5">5 KEYS</option>
+<option value="10">10 KEYS</option>
+<option value="50">50 KEYS</option>
+</select>
+<button onclick="generar()">⚡ GENERAR KEYS</button>
+<div id="resultado">Tus keys aparecerán aquí.</div>
+<button class="secondary" onclick="copiar()">📋 COPIAR TODAS</button>
+<button class="secondary" onclick="salir()">CERRAR SESIÓN</button>
+</section>
+</main>
+
+<script>
+let keys=[];
+
+function entrar(){
+ if(document.getElementById('usuario').value==='ADMIN' &&
+ document.getElementById('password').value==='fabiolo1234'){
+ document.getElementById('login').classList.add('hidden');
+ document.getElementById('app').classList.remove('hidden');
+ }else{
+ document.getElementById('error').textContent='Usuario o contraseña incorrectos';
+ }
+}
+
+function generar(){
+ const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+ const cantidad=Number(document.getElementById('cantidad').value);
+ let nuevas=[];
+ for(let i=0;i<cantidad;i++){
+ let codigo='';
+ for(let j=0;j<20;j++) codigo+=chars[Math.floor(Math.random()*chars.length)];
+ nuevas.push(codigo.match(/.{1,5}/g).join('-'));
+ }
+ keys=[...nuevas,...keys];
+ document.getElementById('resultado').innerHTML=
+ keys.map(k=>'<div class="key">'+k+'</div>').join('');
+}
+
+function copiar(){
+ if(!keys.length)return alert('Genera primero algunas keys');
+ navigator.clipboard.writeText(keys.join('\n'))
+ .then(()=>alert('¡Keys copiadas!'))
+ .catch(()=>alert('No se pudo copiar'));
+}
+
+function salir(){
+ document.getElementById('app').classList.add('hidden');
+ document.getElementById('login').classList.remove('hidden');
+ document.getElementById('password').value='';
+}
+</script>
+</body>
+</html>
